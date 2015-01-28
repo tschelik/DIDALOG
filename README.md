@@ -1,0 +1,2 @@
+# DIDALOG
+Javascript logging wrapper
