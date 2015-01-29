@@ -1,0 +1,38 @@
+<!html>
+
+<head>
+
+    <script src="didalog.js"> </script>
+
+    <script>
+
+            var LOGGER = DIDALOG || {};
+            //try to add llg
+            LOGGER.log('warning', 'This is my warning log message');
+            //clear previous log
+            LOGGER.clear();
+
+            LOGGER.log('warning', 'This is my warning log message');
+
+            LOGGER.log('info', ['This is my info log message', 'My other message in log '] );
+            //add grouping 
+            LOGGER.groupLogStart("Everything");
+            LOGGER.log('debug', 'This is my debug log message');
+
+            LOGGER.log('error', 'This is my error log message');
+            //end grouping these logs
+            LOGGER.groupLogEnd();
+
+            //try to add something that isn/t defined 
+            LOGGER.log('slj', 'This is my slj log message transformed to info');
+
+    </script>
+
+</head>
+
+Testing didalog
+
+<body>
+
+</body>
+</html>
