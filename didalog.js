@@ -17,7 +17,7 @@ DIDALOG = {
     datetime: true,
     defaultGroup: 'DIDALOG',
     didalogConsole: true,
-    didalogConsoleColors : ['#008000', '#B22222', '#FF4500', '#F8F8FF'],
+    didalogConsoleColors : ['#008000', '#B22222', 'FFCC00', '#F8F8FF'],
 
     /**
      * @desc This method does the actual logging
@@ -28,7 +28,6 @@ DIDALOG = {
 
         level = this.checkLevel(level) ? level : this.defaultLogLevel;
         msg = msg || this.defaultMessage;
-
 
         if(this.didalogConsole){
              this.didalogConsoleContainer();
@@ -85,9 +84,11 @@ DIDALOG = {
      */
     logMsg: function (level, msg) {
 
+
         if (this.datetime) {
 
             return (this.getDateAndTime() + " - " + level + ": " + msg );
+
         }
         else
             return (level + ": " + msg);
@@ -144,6 +145,7 @@ DIDALOG = {
      This method will end console group
      */
     groupLogEnd: function () {
+
 
         return this.checkConsoleSupport() == true ? console.groupEnd()
             : alert("Console not supported");
@@ -256,6 +258,7 @@ DIDALOG = {
         
 
         return logDiv;
+
     }
 
 
