@@ -127,6 +127,14 @@ DIDALOG = {
      This method will clear console output
      */
     clear: function () {
+
+	if(this.didalogConsole){
+		var didalogContainerLog = document.getElementById("didalog_onelog");
+		didalogContainerLog.innerHTML = "";
+		var msg = "Didalog Cleared.";
+		var didalogContainer = document.getElementById("didalogContainer");
+             	didalogContainer.appendChild(this.appendToDidalogContainer(msg, "info"));
+	}
         return this.checkConsoleSupport() == true ? console.clear()
             : alert("Console not supported");
     },
@@ -136,7 +144,10 @@ DIDALOG = {
      */
     groupLogStart: function (groupName) {
         msg = groupName || this.defaultGroup;
-
+	if(this.didalogConsole){
+		var didalogContainer = document.getElementById("didalogContainer");
+             	didalogContainer.appendChild(this.appendToDidalogContainer(":::::" + groupName + ":::::", "info"));
+	}
         return this.checkConsoleSupport() == true ? console.group("Logging '%s'", msg)
             : alert("Console not supported");
     },
@@ -145,7 +156,10 @@ DIDALOG = {
      This method will end console group
      */
     groupLogEnd: function () {
-
+	if(this.didalogConsole){
+		var didalogContainer = document.getElementById("didalogContainer");
+             	didalogContainer.appendChild(this.appendToDidalogContainer("::::: Group end :::::", "info"));
+	}
 
         return this.checkConsoleSupport() == true ? console.groupEnd()
             : alert("Console not supported");
