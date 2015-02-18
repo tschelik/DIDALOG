@@ -301,6 +301,7 @@ DIDALOG = {
         var downloadLink = document.createElement("a");
         downloadLink.download = "didalog";
         downloadLink.innerHTML = "Download File";
+        downloadLink.style.display = "none";
         if (window.webkitURL != null)
         {
             downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
@@ -308,7 +309,6 @@ DIDALOG = {
         else
         {
             downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-            downloadLink.onclick = destroyClickedElement;
             downloadLink.style.display = "none";
             document.body.appendChild(downloadLink);
         }
