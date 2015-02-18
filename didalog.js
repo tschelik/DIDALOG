@@ -309,7 +309,6 @@ DIDALOG = {
         else
         {
             downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-            downloadLink.style.display = "none";
             document.body.appendChild(downloadLink);
         }
 
