@@ -18,17 +18,31 @@ DIDALOG = {
     defaultGroup: 'DIDALOG',
     didalogConsole: true,
     didalogConsoleColors : ['#008000', '#B22222', 'FFCC00', '#F8F8FF'],
-
+    logToText : true,
+    allText : '',
+    textFile : null,
+    turnDidalogOff: false,    //if set to true, didalog won't log anything
     /**
      * @desc This method does the actual logging
      * @param level
      * @param msg
      */
     log: function (level, msg) {
+        //if didalog is turned off than don't log anything
+        if(this.turnDidalogOff)
+            return;
 
         level = this.checkLevel(level) ? level : this.defaultLogLevel;
         msg = msg || this.defaultMessage;
-
+    
+        if(this.logToText){
+            if (this.datetime) {
+                this.allText += this.getDateAndTime() + " : " + level + " ::: " + msg + "\n";
+            } else {
+               this.allText += msg + "\n";
+            }
+            
+        }
         if(this.didalogConsole){
              this.didalogConsoleContainer();
              var didalogContainer = document.getElementById("didalogContainer");
@@ -128,13 +142,13 @@ DIDALOG = {
      */
     clear: function () {
 
-	if(this.didalogConsole){
-		var didalogContainerLog = document.getElementById("didalog_onelog");
-		didalogContainerLog.innerHTML = "";
-		var msg = "Didalog Cleared.";
-		var didalogContainer = document.getElementById("didalogContainer");
-             	didalogContainer.appendChild(this.appendToDidalogContainer(msg, "info"));
-	}
+    if(this.didalogConsole){
+        var didalogContainerLog = document.getElementById("didalog_onelog");
+        didalogContainerLog.innerHTML = "";
+        var msg = "Didalog Cleared.";
+        var didalogContainer = document.getElementById("didalogContainer");
+                didalogContainer.appendChild(this.appendToDidalogContainer(msg, "info"));
+    }
         return this.checkConsoleSupport() == true ? console.clear()
             : alert("Console not supported");
     },
@@ -144,10 +158,10 @@ DIDALOG = {
      */
     groupLogStart: function (groupName) {
         msg = groupName || this.defaultGroup;
-	if(this.didalogConsole){
-		var didalogContainer = document.getElementById("didalogContainer");
-             	didalogContainer.appendChild(this.appendToDidalogContainer(":::::" + groupName + ":::::", "info"));
-	}
+    if(this.didalogConsole){
+        var didalogContainer = document.getElementById("didalogContainer");
+                didalogContainer.appendChild(this.appendToDidalogContainer(":::::" + groupName + ":::::", "info"));
+    }
         return this.checkConsoleSupport() == true ? console.group("Logging '%s'", msg)
             : alert("Console not supported");
     },
@@ -156,10 +170,10 @@ DIDALOG = {
      This method will end console group
      */
     groupLogEnd: function () {
-	if(this.didalogConsole){
-		var didalogContainer = document.getElementById("didalogContainer");
-             	didalogContainer.appendChild(this.appendToDidalogContainer("::::: Group end :::::", "info"));
-	}
+    if(this.didalogConsole){
+        var didalogContainer = document.getElementById("didalogContainer");
+                didalogContainer.appendChild(this.appendToDidalogContainer("::::: Group end :::::", "info"));
+    }
 
         return this.checkConsoleSupport() == true ? console.groupEnd()
             : alert("Console not supported");
@@ -190,12 +204,11 @@ DIDALOG = {
             "bottom: 0px;" +
             "display: block;" +
             "z-index:" + z_index + ";");
-            // containerDiv.style.bottom = "" + (-logHeight) + "px";   // hide it initially
-
+       
             // log message
             logDiv = document.createElement("div");
             logDiv.id = log_div;
-            var cssHeight = "height:" + (logHeight - 11) + "px; ";  // subtract paddings and border-top
+            var cssHeight = "height:" + (logHeight - 11) + "px; ";  
             logDiv.setAttribute("style", "font:12px monospace; " +
             cssHeight +
             "color:#fff; " +
@@ -273,7 +286,37 @@ DIDALOG = {
 
         return logDiv;
 
-    }
+    }, 
 
+    /*
+    This method download txt file of all saved logs 
+    */
+    downloadLog: function(){
+        
+        if(this.turnDidalogOff)
+            return;
+
+        var textFileAsBlob = new Blob([this.allText], {type: 'text/plain'});
+        
+        var downloadLink = document.createElement("a");
+        downloadLink.download = "didalog";
+        downloadLink.innerHTML = "Download File";
+        if (window.webkitURL != null)
+        {
+            downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+        }
+        else
+        {
+            downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+            downloadLink.onclick = destroyClickedElement;
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+        }
+
+        downloadLink.click();
+        //after download clear saved log 
+        this.allText = "";
+    
+   }
 
 };

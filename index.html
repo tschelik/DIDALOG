@@ -38,7 +38,12 @@ Testing didalog
 
         //try to add something that isn/t defined
         LOGGER.log('slj', 'This is my slj log message transformed to info');
-       
+        
+        //generate a lot of logs to check download
+        for(var i=0; i<10000; i++)
+            LOGGER.log('error', 'This is my error log message');
+
+        LOGGER.downloadLog();
 
     })();
 
