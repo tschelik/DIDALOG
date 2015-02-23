@@ -21,8 +21,8 @@ DIDALOG = {
     logToText : true, //if this is true, you can send data to server
     allText : '', //global variable to save all logs 
     textFile : null,
-    serverUrl: "", //path to the server script
-	batchSize : 0, //to turn off batching then just set this parameter to zero (0)
+    serverUrl: "/DIDALOG/Examples/PHPExample/getfile.php", //path to the server script
+	batchSize : 10, //to turn off batching then just set this parameter to zero (0)
 	batchSizeCheck : 0,
     turnDidalogOff: false,    //if set to true, didalog won't log anything
     /**

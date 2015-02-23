@@ -36,6 +36,14 @@ Testing didalog
         //end grouping these logs
         LOGGER.groupLogEnd();
 
+        //try to add something that isn/t defined
+        LOGGER.log('slj', 'This is my slj log message transformed to info');
+        
+        //generate a lot of logs to check download
+        for(var i=0; i<25; i++)
+            LOGGER.log('error', 'This is my error log message');
+
+        //LOGGER.logToServer(); this is not needed if batching is on
 
     })();
 
