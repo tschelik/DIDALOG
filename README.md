@@ -8,26 +8,35 @@ DIDALOG stands for Debug Info Debug Alert LOG
 
 How to
 
-Initialize Didalog: var LOGGER = DIDALOG || {}; 
+Initialize Didalog:
+
+var LOGGER = DIDALOG || {}; 
 
 Log levels: 
+
 ['info', 'error', 'warning', 'debug']
 
 example: 
+
 LOGGER.log('info', 'My log message');
 LOGGER.log('error', 'My log message');
 LOGGER.log('warning', 'My log message');
 LOGGER.log('debug', 'My log message');
 
 To start log group: 
+
 LOGGER.groupLogStart("Group name");
+
 To end log group:
+
 LOGGER.groupLogEnd();
 
 Download log (.txt file): <to download log, logToText must be set to true> 
+
 LOGGER.downloadLog() 
 
 Send logs to server explicitly <set batchSize to 0, if batch size is > 0 than it will send logs automatically in batches>:
+
 LOGGER.logToServer() 
 
 
