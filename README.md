@@ -19,8 +19,11 @@ Log levels:
 example: 
 
 LOGGER.log('info', 'My log message');
+
 LOGGER.log('error', 'My log message');
+
 LOGGER.log('warning', 'My log message');
+
 LOGGER.log('debug', 'My log message');
 
 To start log group: 
@@ -42,13 +45,21 @@ LOGGER.logToServer()
 
 
 Didalog properties:
+
 defaultMessage: 'This is the default log message. Please enter your log message.',
+
 datetime: true,
+
 defaultGroup: 'DIDALOG',
+
 didalogConsole: true, <if true external display will show up, to turn it off set to false>
+
 logToText : <if true you can send data to server>
+
 serverUrl: <path to the server script>
+
 batchSize : 10 <to turn off batching then just set this parameter to zero (0)>
+
 turnDidalogOff: false,   <if true didalog won't log anything>
 
 
