@@ -2,7 +2,7 @@
 
 <head>
 
-    <script src="/Examples/PlainHTML/didalog.js"> </script>
+    <script src="../../didalog.js"> </script>
 
 
 
@@ -35,7 +35,8 @@ Testing didalog
         LOGGER.log('error', 'This is my error log message');
         //end grouping these logs
         LOGGER.groupLogEnd();
-
+	
+	LOGGER.downloadLog();
 
     })();
 

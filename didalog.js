@@ -86,7 +86,10 @@ DIDALOG = {
         });
     },
 
-
+    /**
+     * @desc This method returns current date and time
+     * @returns {string}
+     */
     getDateAndTime: function() {
 
         var currentDate = new Date();
@@ -102,7 +105,10 @@ DIDALOG = {
 
 
     /**
-     This method writes msg on standard output (console)
+     * @desc This method return msg prepared for logging
+     * @param level
+     * @param msg
+     * @returns {string}
      */
     logMsg: function (level, msg) {
 
@@ -115,7 +121,12 @@ DIDALOG = {
         else
             return (level + ": " + msg);
     },
-
+    /**
+     * @desc This method translate msg log level to console level
+     * @param level
+     * @param msg
+     * @returns {*}
+     */
     translateLogLevel: function (level, msg) {
 
         if (this.lvltoNumber(level) == 0)
@@ -129,7 +140,9 @@ DIDALOG = {
     },
 
     /**
-     This method returns index of specified level
+     * @desc This method returns index of specified level
+     * @param level
+     * @returns {number|Number|*}
      */
     lvltoNumber: function (level) {
 
@@ -137,7 +150,9 @@ DIDALOG = {
     },
 
     /**
-     This method checks does level exists
+     * @desc This method checks does level exists
+     * @param level
+     * @returns {boolean}
      */
     checkLevel: function (level) {
 
@@ -146,7 +161,7 @@ DIDALOG = {
     },
 
     /**
-     This method will clear console output
+     * @desc This method will clear logger output
      */
     clear: function () {
 
@@ -162,7 +177,9 @@ DIDALOG = {
     },
 
     /**
-     This method will start console group
+     * @desc This method will start new log group
+     * @param groupName
+     * @returns {*|void}
      */
     groupLogStart: function (groupName) {
         msg = groupName || this.defaultGroup;
@@ -175,7 +192,8 @@ DIDALOG = {
     },
 
     /**
-     This method will end console group
+     * @desc This method will end log group
+     * @returns {*|void}
      */
     groupLogEnd: function () {
     if(this.didalogConsole){
@@ -185,8 +203,11 @@ DIDALOG = {
 
         return this.checkConsoleSupport() == true ? console.groupEnd()
             : alert("Console not supported");
-    }, 
+    },
 
+    /**
+     * @desc This method creates Didalog container
+     */
     didalogConsoleContainer: function () {
 
         var container_div = "didalogContainer";
@@ -266,7 +287,9 @@ DIDALOG = {
         }
 
     },
-
+    /**
+     * @desc This method slides Didalog external display (container)
+     */
     slide : function(){
         var didalogContainer = document.getElementById("didalogContainer");
         var display = didalogContainer.style.height;
@@ -276,7 +299,12 @@ DIDALOG = {
             didalogContainer.style.height = "215px";
         }
     },
-
+    /**
+     * @desc This method adds message to Didalog container
+     * @param msg
+     * @param level
+     * @returns {*}
+     */
     appendToDidalogContainer: function(msg, level){
 
         // style for log message
@@ -294,11 +322,11 @@ DIDALOG = {
 
         return logDiv;
 
-    }, 
+    },
 
-    /*
-    This method download txt file of all saved logs 
-    */
+    /**
+     * @desc This method creates .txt file from logs and downloads it
+     */
     downloadLog: function(){
         
         if(this.turnDidalogOff)
@@ -324,11 +352,12 @@ DIDALOG = {
         //after download clear saved log 
         this.allText = "";
     
-   }, 
-   /*
-   This method send logs to server in batches and using async. Set batch size and server url 
-   and async batch will be sent to server. 	
-   */
+   },
+
+    /**
+     * @desc This method send logs to server in batches and using async. Set batch size and server url
+     and async batch will be sent to server.
+     */
     logToServer: function(){
 		if(this.serverUrl != null){
 				var xhrForm = new XMLHttpRequest();        
