@@ -32,3 +32,8 @@ serverUrl: <path to the server script>
 batchSize : 10 <to turn off batching then just set this parameter to zero (0)>
 turnDidalogOff: false,   <if true didalog won't log anything>
 ```
+
+
+###Available on Bower: bower install didalog 
+
+
