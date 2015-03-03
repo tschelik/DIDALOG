@@ -1,0 +1,28 @@
+{
+  "name": "DIDALOG",
+  "version": "1.0.0",
+  "homepage": "https://github.com/tcelik/DIDALOG",
+  "authors": [
+    "Tarik Čelik <tarik.chelik@gmail.com",
+    "Adnan Kukuljac <adnankukuljac@gmail.com>"
+  ],
+  "description": "Didalog is a Javascript logging wrapper",
+  "main": "didalog.js",
+  "keywords": [
+    "didalog",
+    "javascript",
+    "logger",
+    "server",
+    "download",
+    "logs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "Examples"
+  ]
+}
