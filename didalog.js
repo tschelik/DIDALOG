@@ -1,96 +1,43 @@
 /**
- * @desc This lib (DIDALOG) is a wrapper for the browser's native debug logger
+ * @desc self lib (DIDALOG) is a wrapper for the browser's native debug logger
  * @author Tarik Čelik tarik.chelik@gmail.com
  * @author Adnan Kukuljac adnankukuljac@gmail.com
  * @version 1.0 (Beta)
  * @license Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0
  * @usage
  *          var LOGGER = DIDALOG || {};
- *              LOGGER.log('info', 'This is my log message');
+ *              LOGGER.log('info', 'self is my log message');
  */
-DIDALOG = {
-    logLevels: ['info', 'error', 'warning', 'debug'],
-    defaultLogLevel: 'info', 
-    isDebug: true,
-    defaultMessage: 'This is the default log message. Please enter your log message.',
-    callbackFunction: '',
-    datetime: true,
-    defaultGroup: 'DIDALOG',
-    didalogConsole: true, //if set to true external display will show up, to turn it off set to false
-    didalogConsoleColors : ['#008000', '#B22222', 'FFCC00', '#F8F8FF'], //colours for log levels
-    logToText : true, //if this is true, you can send data to server
-    allText : '', //global variable to save all logs 
-    textFile : null,
-    serverUrl: "", //path to the server script
-	batchSize : 0, //to turn off batching then just set this parameter to zero (0)
-	batchSizeCheck : 0,
-    turnDidalogOff: false,    //if set to true, didalog won't log anything
+DIDALOG = new function () {
+    var self = this;
+
+    self.logLevels = ['info', 'error', 'warning', 'debug'];
+    self.defaultLogLevel = 'info';
+    self.isDebug = true;
+    self.defaultMessage = 'self is the default log message. Please enter your log message.';
+    self.callbackFunction = '';
+    self.datetime = true;
+    self.defaultGroup = 'DIDALOG';
+    self.didalogConsole = true; //if set to true external display will show up, to turn it off set to false
+    self.didalogConsoleColors = ['#008000', '#B22222', 'FFCC00', '#F8F8FF']; //colours for log levels
+    self.logToText = true; //if self is true, you can send data to server
+    self.allText = ''; //global variable to save all logs 
+    self.textFile = null;
+    self.serverUrl = ""; //path to the server script
+    self.batchSize = 0; //to turn off batching then just set self parameter to zero (0)
+    self.batchSizeCheck = 0;
+    self.turnDidalogOff = false;    //if set to true, didalog won't log anything
+    self.useUTCDateTime = false;  // if set to true will use UTC time everywhere
+
     /**
-     * @desc This method does the actual logging
-     * @param level
-     * @param msg
-     */
-    log: function (level, msg) {
-        //if didalog is turned off than don't log anything
-        if(this.turnDidalogOff)
-            return;
-		//if batching is on, than when we have to check the current batch size and sending size
-		//otherwise user must call explicitly logToServer() method
-		if(this.batchSize != 0 && this.batchSizeCheck == this.batchSize && this.logToText == true){
-			this.logToServer();
-			this.batchSizeCheck = 0; //reset batchSizeCheck
-		}
-		
-        level = this.checkLevel(level) ? level : this.defaultLogLevel;
-        msg = msg || this.defaultMessage;
-    
-        if(this.logToText){
-            if (this.datetime) {
-                this.allText += this.getDateAndTime() + " : " + level + " ::: " + msg + "\n";
-            } else {
-               this.allText += msg + "\n";
-            }
-            this.batchSizeCheck++;
+    * @desc self method returns current date and time
+    * @returns {string}
+    */
+    var getDateAndTime = function () {
+
+        if (self.useUTCDateTime) {
+            return getUTCDateAndTime();
         }
-        if(this.didalogConsole){
-             this.didalogConsoleContainer();
-             var didalogContainer = document.getElementById("didalogContainer");
-             didalogContainer.appendChild(this.appendToDidalogContainer(msg, level));
-        }
-
-        return this.checkConsoleSupport() == true ? this.translateLogLevel(level, this.logMsg(level, msg))
-            : alert("Console not supported");
-
-    },
-
-    /**
-     * @desc This method check if the current browser has the console object
-     * @returns {boolean}
-     */
-    checkConsoleSupport: function () {
-        return (window.console) ? true : false;
-    },
-
-    /**
-     * @desc This method is used internally for generating the log message string
-     * @param level
-     * @param msg
-     * @returns {string}
-     */
-    setLogStringTemplate: function (level, msg) {
-        var replacements = {"%LEVEL%": level, "%MSG%": msg},
-            str = '::[%LEVEL%] %MSG%';
-
-        str = str.replace(/%\w+%/g, function (all) {
-            return replacements[all] || all;
-        });
-    },
-
-    /**
-     * @desc This method returns current date and time
-     * @returns {string}
-     */
-    getDateAndTime: function() {
 
         var currentDate = new Date();
         var printDatetime = " " + currentDate.getDate() + "/"
@@ -101,114 +48,286 @@ DIDALOG = {
             + currentDate.getSeconds();
 
         return printDatetime;
-    },
+    };
+
+    /**
+   * @desc self method returns current UTC date and time
+   * @returns {string}
+   */
+    var getUTCDateAndTime = function () {
+
+        var currentDate = new Date();
+        var printDatetime = " " + currentDate.getUTCDate() + "/"
+            + (currentDate.getUTCMonth() + 1) + "/"
+            + currentDate.getUTCFullYear() + " @ "
+            + currentDate.getUTCHours() + ":"
+            + currentDate.getUTCMinutes() + ":"
+            + currentDate.getUTCSeconds();
+
+        return printDatetime;
+    };
 
 
     /**
-     * @desc This method return msg prepared for logging
+    * @desc container for overriding console logging methods
+    * @returns {string}
+    */
+    self.consoleOverride = new function () {
+        var override = this;
+
+        // Control flag variables
+        override.intrusiveModeEnabled = false;
+        override.skipRecusiveCall = false;
+
+        // Backup old console logging functions
+        override.old = new function () {
+            this.log = console.log;
+            this.warn = console.warn;
+            this.error = console.error;
+            this.debug = console.debug;
+            this.info = console.info;
+        };
+
+        override.info = function () {
+            var level = self.logLevels[0];
+
+            if (!override.skipRecusiveCall) {
+                self.log(level, arguments[0]);
+            }
+
+            override.skipRecusiveCall = false;
+            override.old.info(arguments);
+        };
+
+        override.log = function () {
+            var level = self.logLevels[0];
+
+            if (!override.skipRecusiveCall) {
+                self.log(level, arguments[0]);
+            }
+
+            override.skipRecusiveCall = false;
+            override.old.log(arguments);
+        };
+
+        override.error = function () {
+            var level = self.logLevels[1];
+
+            if (!override.skipRecusiveCall) {
+                self.log(level, arguments[0]);
+            }
+
+            override.skipRecusiveCall = false;
+            override.old.error(arguments);
+        };
+
+        override.warn = function () {
+            var level = self.logLevels[2];
+
+            if (!override.skipRecusiveCall) {
+                self.log(level, arguments[0]);
+            }
+
+            override.skipRecusiveCall = false;
+            override.old.warn(arguments);
+        };
+
+        override.debug = function () {
+            var level = self.logLevels[3];
+
+            if (!override.skipRecusiveCall) {
+                self.log(level, arguments[0]);
+            }
+
+            override.skipRecusiveCall = false;
+            override.old.debug(arguments);
+        };
+
+        /**
+       * @desc override default console logging methods like console.log, console.warn, console.info, console.debug
+       * @returns {string}
+       */
+        override.init = function () {
+            override.intrusiveModeEnabled = true;
+
+            console.error = override.error;
+            console.warn = override.warn;
+            console.info = override.info;
+            console.error = override.error;
+            console.debug = override.debug;
+            console.log = override.log;
+        };
+    };
+
+    /**
+     * @desc self method does the actual logging
+     * @param level
+     * @param msg
+     */
+    self.log = function (level, msg) {
+        //if didalog is turned off than don't log anything
+        if (self.turnDidalogOff)
+            return;
+        //if batching is on, than when we have to check the current batch size and sending size
+        //otherwise user must call explicitly logToServer() method
+        if (self.batchSize != 0 && self.batchSizeCheck == self.batchSize && self.logToText == true) {
+            self.logToServer();
+            self.batchSizeCheck = 0; //reset batchSizeCheck
+        }
+
+        level = self.checkLevel(level) ? level : self.defaultLogLevel;
+        msg = msg || self.defaultMessage;
+
+        if (self.logToText) {
+            if (self.datetime) {
+                self.allText += getDateAndTime() + " : " + level + " ::: " + msg + "\n";
+            } else {
+                self.allText += msg + "\n";
+            }
+            self.batchSizeCheck++;
+        }
+        if (self.didalogConsole) {
+            self.didalogConsoleContainer();
+            var didalogContainer = document.getElementById("didalogContainer");
+            didalogContainer.appendChild(self.appendToDidalogContainer(msg, level));
+        }
+
+        return self.checkConsoleSupport() == true ? self.translateLogLevel(level, self.logMsg(level, msg))
+            : alert("Console not supported");
+
+    };
+
+    /**
+     * @desc self method check if the current browser has the console object
+     * @returns {boolean}
+     */
+    self.checkConsoleSupport = function () {
+        return (window.console) ? true : false;
+    };
+
+    /**
+     * @desc self method is used internally for generating the log message string
      * @param level
      * @param msg
      * @returns {string}
      */
-    logMsg: function (level, msg) {
+    self.setLogStringTemplate = function (level, msg) {
+        var replacements = { "%LEVEL%": level, "%MSG%": msg },
+            str = '::[%LEVEL%] %MSG%';
+
+        str = str.replace(/%\w+%/g, function (all) {
+            return replacements[all] || all;
+        });
+    };
+
+    /**
+     * @desc self method return msg prepared for logging
+     * @param level
+     * @param msg
+     * @returns {string}
+     */
+    self.logMsg = function (level, msg) {
 
 
-        if (this.datetime) {
+        if (self.datetime) {
 
-            return (this.getDateAndTime() + " - " + level + ": " + msg );
+            return (getDateAndTime() + " - " + level + ": " + msg);
 
         }
         else
             return (level + ": " + msg);
-    },
+    };
     /**
-     * @desc This method translate msg log level to console level
+     * @desc self method translate msg log level to console level
      * @param level
      * @param msg
      * @returns {*}
      */
-    translateLogLevel: function (level, msg) {
+    self.translateLogLevel = function (level, msg) {
+        if (self.consoleOverride.intrusiveModeEnabled) {
+            self.consoleOverride.skipRecusiveCall = true;
+        }
 
-        if (this.lvltoNumber(level) == 0)
+        if (self.lvltoNumber(level) == 0)
             return console.info(msg);
-        else if (this.lvltoNumber(level) == 1)
+        else if (self.lvltoNumber(level) == 1)
             return console.error(msg);
-        else if (this.lvltoNumber(level) == 2)
+        else if (self.lvltoNumber(level) == 2)
             return console.warn(msg);
-        else if (this.lvltoNumber(level) == 3)
+        else if (self.lvltoNumber(level) == 3)
             return console.debug(msg);
-    },
+    };
 
     /**
-     * @desc This method returns index of specified level
+     * @desc self method returns index of specified level
      * @param level
      * @returns {number|Number|*}
      */
-    lvltoNumber: function (level) {
+    self.lvltoNumber = function (level) {
 
-        return this.logLevels.indexOf(level);
-    },
+        return self.logLevels.indexOf(level);
+    };
 
     /**
-     * @desc This method checks does level exists
+     * @desc self method checks does level exists
      * @param level
      * @returns {boolean}
      */
-    checkLevel: function (level) {
+    self.checkLevel = function (level) {
 
-        return (Array.apply(null, this.logLevels).indexOf(level) != -1)
+        return (Array.apply(null, self.logLevels).indexOf(level) != -1);
 
-    },
+    };
 
     /**
-     * @desc This method will clear logger output
+     * @desc self method will clear logger output
      */
-    clear: function () {
+    self.clear = function () {
 
-    if(this.didalogConsole){
-        var didalogContainerLog = document.getElementById("didalog_onelog");
-        didalogContainerLog.innerHTML = "";
-        var msg = "Didalog Cleared.";
-        var didalogContainer = document.getElementById("didalogContainer");
-                didalogContainer.appendChild(this.appendToDidalogContainer(msg, "info"));
-    }
-        return this.checkConsoleSupport() == true ? console.clear()
+        if (self.didalogConsole) {
+            var didalogContainerLog = document.getElementById("didalog_onelog");
+            didalogContainerLog.innerHTML = "";
+            var msg = "Didalog Cleared.";
+            var didalogContainer = document.getElementById("didalogContainer");
+            didalogContainer.appendChild(self.appendToDidalogContainer(msg, "info"));
+        }
+        return self.checkConsoleSupport() == true ? console.clear()
             : alert("Console not supported");
-    },
+    };
 
     /**
-     * @desc This method will start new log group
+     * @desc self method will start new log group
      * @param groupName
      * @returns {*|void}
      */
-    groupLogStart: function (groupName) {
-        msg = groupName || this.defaultGroup;
-    if(this.didalogConsole){
-        var didalogContainer = document.getElementById("didalogContainer");
-                didalogContainer.appendChild(this.appendToDidalogContainer(":::::" + groupName + ":::::", "info"));
-    }
-        return this.checkConsoleSupport() == true ? console.group("Logging '%s'", msg)
+    self.groupLogStart = function (groupName) {
+        msg = groupName || self.defaultGroup;
+        if (self.didalogConsole) {
+            var didalogContainer = document.getElementById("didalogContainer");
+            didalogContainer.appendChild(self.appendToDidalogContainer(":::::" + groupName + ":::::", "info"));
+        }
+        return self.checkConsoleSupport() == true ? console.group("Logging '%s'", msg)
             : alert("Console not supported");
-    },
+    };
 
     /**
-     * @desc This method will end log group
+     * @desc self method will end log group
      * @returns {*|void}
      */
-    groupLogEnd: function () {
-    if(this.didalogConsole){
-        var didalogContainer = document.getElementById("didalogContainer");
-                didalogContainer.appendChild(this.appendToDidalogContainer("::::: Group end :::::", "info"));
-    }
+    self.groupLogEnd = function () {
+        if (self.didalogConsole) {
+            var didalogContainer = document.getElementById("didalogContainer");
+            didalogContainer.appendChild(self.appendToDidalogContainer("::::: Group end :::::", "info"));
+        }
 
-        return this.checkConsoleSupport() == true ? console.groupEnd()
+        return self.checkConsoleSupport() == true ? console.groupEnd()
             : alert("Console not supported");
-    },
+    };
 
     /**
-     * @desc This method creates Didalog container
+     * @desc self method creates Didalog container
      */
-    didalogConsoleContainer: function () {
+    self.didalogConsoleContainer = function () {
 
         var container_div = "didalogContainer";
         var z_index = 9999;
@@ -219,7 +338,7 @@ DIDALOG = {
 
         var containerDiv = document.getElementById(container_div);
         //create div only once
-        if(!containerDiv) {
+        if (!containerDiv) {
 
             containerDiv = document.createElement("div");
             containerDiv.id = container_div;
@@ -233,12 +352,12 @@ DIDALOG = {
             "bottom: 0px;" +
             "display: block;" +
             "z-index:" + z_index + ";");
-       
+
             // log message
-            logDiv = document.createElement("div");
-            logDiv.id = log_div;
-            var cssHeight = "height:" + (logHeight - 11) + "px; ";  
-            logDiv.setAttribute("style", "font:12px monospace; " +
+            self.logDiv = document.createElement("div");
+            self.logDiv.id = log_div;
+            var cssHeight = "height:" + (logHeight - 11) + "px; ";
+            self.logDiv.setAttribute("style", "font:12px monospace; " +
             cssHeight +
             "color:#fff; " +
             "overflow-x:hidden; " +
@@ -251,24 +370,24 @@ DIDALOG = {
             "background:rgba(0, 0, 0, 0.8); " +
             "border-top:1px solid #aaa; ");
 
-          
+
             // the first message in log
             var msg = "Didalog Started";
 
-            containerDiv.appendChild(this.appendToDidalogContainer(msg, "info"));
+            containerDiv.appendChild(self.appendToDidalogContainer(msg, "info"));
 
             var didalogButton = document.createElement("div");
             didalogButton.id = didalog_button;
-            didalogButton.setAttribute("style", 
-            "position: absolute;"+
+            didalogButton.setAttribute("style",
+            "position: absolute;" +
             "top: -30px;" +
             "padding: 10px;" +
-            "right: 0px;" + 
-            "width: auto;" + 
+            "right: 0px;" +
+            "width: auto;" +
             "height: 11px;" +
-            "background: #333;" );
+            "background: #333;");
 
-            didalogButton.onclick = this.slide;
+            didalogButton.onclick = self.slide;
 
             var spanDidalogButton = document.createElement("span");  // for coloring text
             spanDidalogButton.style.color = "#afa";
@@ -277,7 +396,7 @@ DIDALOG = {
 
             containerDiv.appendChild(didalogButton);
 
-            if(document.body != null){
+            if (document.body != null) {
                 document.body.appendChild(containerDiv);
             }
 
@@ -286,87 +405,85 @@ DIDALOG = {
 
         }
 
-    },
+    };
     /**
-     * @desc This method slides Didalog external display (container)
+     * @desc self method slides Didalog external display (container)
      */
-    slide : function(){
+    self.slide = function () {
         var didalogContainer = document.getElementById("didalogContainer");
         var display = didalogContainer.style.height;
         if (display == "215px") {
             didalogContainer.style.height = "0px";
-        }else if(display == "0px"){
+        } else if (display == "0px") {
             didalogContainer.style.height = "215px";
         }
-    },
+    };
     /**
-     * @desc This method adds message to Didalog container
+     * @desc self method adds message to Didalog container
      * @param msg
      * @param level
      * @returns {*}
      */
-    appendToDidalogContainer: function(msg, level){
+    self.appendToDidalogContainer = function (msg, level) {
 
         // style for log message
         var span = document.createElement("span");  // for coloring text
-        span.style.color = this.didalogConsoleColors[this.lvltoNumber(level)];
+        span.style.color = self.didalogConsoleColors[self.lvltoNumber(level)];
 
-        if (this.datetime) {
-            span.appendChild(document.createTextNode(this.getDateAndTime() + " : " + level + " ::: " + msg));
+        if (self.datetime) {
+            span.appendChild(document.createTextNode(getDateAndTime() + " : " + level + " ::: " + msg));
         } else {
             span.appendChild(document.createTextNode(msg));
         }
-        logDiv.appendChild(span);
-        logDiv.appendChild(document.createElement("br"));   // blank line
-        
+        self.logDiv.appendChild(span);
+        self.logDiv.appendChild(document.createElement("br"));   // blank line
 
-        return logDiv;
 
-    },
+        return self.logDiv;
+
+    };
 
     /**
-     * @desc This method creates .txt file from logs and downloads it
+     * @desc self method creates .txt file from logs and downloads it
      */
-    downloadLog: function(){
-        
-        if(this.turnDidalogOff)
+    self.downloadLog = function () {
+
+        if (self.turnDidalogOff)
             return;
 
-        var textFileAsBlob = new Blob([this.allText], {type: 'text/plain'});
-        
+        var textFileAsBlob = new Blob([self.allText], { type: 'text/plain' });
+
         var downloadLink = document.createElement("a");
         downloadLink.download = "didalog";
         downloadLink.innerHTML = "Download File";
         downloadLink.style.display = "none";
-        if (window.webkitURL != null)
-        {
+        if (window.webkitURL != null) {
             downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
         }
-        else
-        {
+        else {
             downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
             document.body.appendChild(downloadLink);
         }
 
         downloadLink.click();
         //after download clear saved log 
-        this.allText = "";
-    
-   },
+        self.allText = "";
+
+    };
 
     /**
-     * @desc This method send logs to server in batches and using async. Set batch size and server url
+     * @desc self method send logs to server in batches and using async. Set batch size and server url
      and async batch will be sent to server.
      */
-    logToServer: function(){
-		if(this.serverUrl != null){
-				var xhrForm = new XMLHttpRequest();        
-				xhrForm.open("POST", this.serverUrl, true); //true for async requests
-				xhrForm.send(this.allText);
-		} else {
-				this.log("error", "URL to the server script must be set");
-		}
-		this.allText = ""; //reset global text variable to save resource
-    }
+    self.logToServer = function () {
+        if (self.serverUrl != null) {
+            var xhrForm = new XMLHttpRequest();
+            xhrForm.open("POST", self.serverUrl, true); //true for async requests
+            xhrForm.send(self.allText);
+        } else {
+            self.log("error", "URL to the server script must be set");
+        }
+        self.allText = ""; //reset global text variable to save resource
+    };
 
 };

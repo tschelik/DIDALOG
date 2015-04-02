@@ -15,10 +15,13 @@ Testing didalog
 </body>
 
 <script>
-
-
+    var logger = {};
     (function() {
         var LOGGER = DIDALOG || {};
+        
+        //override console logging
+        LOGGER.consoleOverride.init();
+
         //try to add llg
         LOGGER.log('warning', 'This is my warning log message');
         //clear previous log
@@ -37,7 +40,7 @@ Testing didalog
         LOGGER.groupLogEnd();
 	
 	LOGGER.downloadLog();
-
+        logger = LOGGER;
     })();
 
 
